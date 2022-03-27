@@ -18,11 +18,44 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace ImportExcel
 {
     /// <summary>
+    /// Класс Участок
+    /// </summary>
+    public partial class Segment
+    {
+        public double[,] T;
+        public double[] X;
+        public double[] Y;
+        public int Number;
+        public double A;
+        public double B;
+        public double Determination;
+        /// <summary>
+        /// Конструктор класса Участок
+        /// </summary>
+        /// <param name="X">Вектор X</param>
+        /// <param name="Y">Вектор Y</param>
+        public Segment(double[] X, double[] Y, int offset)
+        {
+            this.T = new double[X.Length - offset, 2];
+            this.X = new double[X.Length - offset];
+            this.Y = new double[X.Length - offset];
+            for (int i = 0; i < X.Length - offset; i++)
+            {
+                T[i, 0] = X[i];
+                T[i, 1] = Y[i];
+                this.X[i] = X[i];
+                this.Y[i] = Y[i];
+            }
+        }
+    }
+    /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
         private double[,] list;
+        private double[] X;
+        private double[] Y;
         private int _rows = 0;
         private int _columns = 0;
         private double _sumX = 0;
@@ -31,6 +64,8 @@ namespace ImportExcel
         private double _sumXY = 0;
         private double _a = 0;
         private double _b = 0;
+        private double[] _vs;
+        private static int _offset = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -47,19 +82,36 @@ namespace ImportExcel
                     s += " | " + list[i, j];
                 LbInputData.Items.Add(s);
             }
-            LeastSquaresMethod();
+            LeastSquaresMethod(this.list);
 
-            double[] vs = new double[_rows];
+            CalculatingPracticalValue(this.list);
+
+            X = new double[_rows];
+            Y = new double[_rows];
             for (int i = 0; i < _rows; i++)
             {
-                vs[i] = _a * list[i, 0] + _b;
-                LbInputData.Items.Add(vs[i]);
+                X[i] = list[i, 0];
+                Y[i] = list[i, 1];
+            }
+            Method();
+        }
+        /// <summary>
+        /// Вычисление практического значения в методе наименьших квадратов
+        /// </summary>
+        private void CalculatingPracticalValue(double[,] inputMatrix)
+        {
+            this._vs = new double[_rows];
+            for (int i = 0; i < _rows; i++)
+            {
+                this._vs[i] = _a * inputMatrix[i, 0] + _b;
+                LbInputData.Items.Add(_vs[i]);
             }
         }
         /// <summary>
         /// Метод наименьших квадратов (линейная модель)
         /// </summary>
-        private void LeastSquaresMethod()
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        private void LeastSquaresMethod(double[,] inputMatrix)
         {
             for (int i = 0; i < _rows; i++)
             {
@@ -74,11 +126,51 @@ namespace ImportExcel
             LbInputData.Items.Add("SumXY = " + _sumY);
 
             _a = Math.Sqrt(Math.Abs((_rows * _sumXY - _sumX * _sumY) / (_rows * _sumXX - _sumX * _sumX)));
-            _b = Math.Sqrt((_sumXX * _sumY - _sumX * _sumXY) / (_rows * _sumXX - _sumX * _sumX));
+            _b = Math.Sqrt(Math.Abs((_sumXX * _sumY - _sumX * _sumXY) / (_rows * _sumXX - _sumX * _sumX)));
             LbInputData.Items.Add("a = " + _a);
             LbInputData.Items.Add("b = " + _b);
         }
-
+        /// <summary>
+        /// Разрабатываемый метод аппроксимации
+        /// </summary>
+        private void Method()
+        {
+            List<Segment> segments = new List<Segment>();
+            Segment segment = new Segment(X, Y, 0) { Number = 0 };
+            segments.Add(segment);
+            Segment segment1;
+            do
+            {
+                _offset++;
+                segment1 = new Segment(X, Y, _offset) { Number = 1 };
+                LeastSquaresMethod(segment1.T);
+                segment1.A = this._a;
+                segment1.B = this._b;
+                _rows -= 1;
+                this.CalculatingPracticalValue(segment1.T);
+                segment1.Determination = this.CalculationDetermination(segment1.Y, _vs);
+            }
+            while (segment1.Determination < 0.85);
+            segments.Add(segment1);
+        }
+        /// <summary>
+        /// Вычисление коэффициента детерминации
+        /// </summary>
+        /// <param name="Y">Вектор исходных значений</param>
+        /// <param name="YT">Вектор значений, полученных из модели</param>
+        /// <returns></returns>
+        private double CalculationDetermination(double[] Y, double[] YT)
+        {
+            double Average = Y.Average();
+            double Numerator = 0;
+            double Denominator = 0;
+            for (int i = 0; i < Y.Length; i++)
+            {
+                Numerator += (Y[i] - YT[i]) * (Y[i] - YT[i]);
+                Denominator += (Y[i] - Average) * (Y[i] - Average);
+            }
+            return 1 - Numerator / Denominator;
+        }
         /// <summary>
         /// Импорт данных из Excel-файла (не более 5 столбцов и любое количество строк <= 50.
         /// </summary>
