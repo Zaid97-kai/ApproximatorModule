@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using ProjectObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,35 +19,23 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace ImportExcel
 {
     /// <summary>
-    /// Класс Участок
+    /// Узел таблицы
     /// </summary>
-    public partial class Segment
+    public partial class Node
     {
-        public double[,] T;
-        public double[] X;
-        public double[] Y;
-        public int Number;
-        public double A;
-        public double B;
-        public double Determination;
+        public double X { get; set; }
         /// <summary>
-        /// Конструктор класса Участок
+        /// Теоретическое значение
         /// </summary>
-        /// <param name="X">Вектор X</param>
-        /// <param name="Y">Вектор Y</param>
-        public Segment(double[] X, double[] Y, int offset)
-        {
-            this.T = new double[X.Length - offset, 2];
-            this.X = new double[X.Length - offset];
-            this.Y = new double[X.Length - offset];
-            for (int i = 0; i < X.Length - offset; i++)
-            {
-                T[i, 0] = X[i];
-                T[i, 1] = Y[i];
-                this.X[i] = X[i];
-                this.Y[i] = Y[i];
-            }
-        }
+        public double Y { get; set; }
+        /// <summary>
+        /// Практическое значение
+        /// </summary>
+        public double value { get; set; }
+        /// <summary>
+        /// Разность между практическим и теоретическим значением
+        /// </summary>
+        public double difference { get; set; }
     }
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -62,10 +51,22 @@ namespace ImportExcel
         private double _sumXX = 0;
         private double _sumY = 0;
         private double _sumXY = 0;
+        /// <summary>
+        /// Коэффициент A линейной модели
+        /// </summary>
         private double _a = 0;
+        /// <summary>
+        /// Коэффициент B линейной модели
+        /// </summary>
         private double _b = 0;
+        /// <summary>
+        /// Вектор практических значений
+        /// </summary>
         private double[] _vs;
         private static int _offset = 0;
+        private List<Segment> segments = new List<Segment>();
+        private List<Node> nodesFirstTable = new List<Node>();
+        private List<Node> nodesSecondTable = new List<Node>();
         public MainWindow()
         {
             InitializeComponent();
@@ -80,11 +81,10 @@ namespace ImportExcel
                 s = "";
                 for (int j = 0; j < _columns; j++) //по всем колонкам
                     s += " | " + list[i, j];
-                LbInputData.Items.Add(s);
             }
             LeastSquaresMethod(this.list);
-
             CalculatingPracticalValue(this.list);
+            LbInputData.ItemsSource = this.nodesFirstTable;
 
             X = new double[_rows];
             Y = new double[_rows];
@@ -103,8 +103,8 @@ namespace ImportExcel
             this._vs = new double[_rows];
             for (int i = 0; i < _rows; i++)
             {
-                this._vs[i] = _a * inputMatrix[i, 0] + _b;
-                LbInputData.Items.Add(_vs[i]);
+                this._vs[i] = this._a * inputMatrix[i, 0] + this._b;
+                this.nodesFirstTable.Add(new Node() { value = this._vs[i], X = inputMatrix[i, 0], Y = inputMatrix[i, 1], difference = Math.Abs(this._vs[i] - inputMatrix[i, 1]) });
             }
         }
         /// <summary>
@@ -113,45 +113,98 @@ namespace ImportExcel
         /// <param name="inputMatrix">Входная матрица значений X-Y</param>
         private void LeastSquaresMethod(double[,] inputMatrix)
         {
-            for (int i = 0; i < _rows; i++)
-            {
-                _sumX += list[i, 0];
-                _sumXX += list[i, 0] * list[i, 0];
-                _sumY += list[i, 1];
-                _sumXY += list[i, 0] * list[i, 1];
-            }
-            LbInputData.Items.Add("SumX = " + _sumX);
-            LbInputData.Items.Add("SumXX = " + _sumXX);
-            LbInputData.Items.Add("SumY = " + _sumY);
-            LbInputData.Items.Add("SumXY = " + _sumY);
+            int n = inputMatrix.GetLength(0);
 
-            _a = Math.Sqrt(Math.Abs((_rows * _sumXY - _sumX * _sumY) / (_rows * _sumXX - _sumX * _sumX)));
-            _b = Math.Sqrt(Math.Abs((_sumXX * _sumY - _sumX * _sumXY) / (_rows * _sumXX - _sumX * _sumX)));
-            LbInputData.Items.Add("a = " + _a);
-            LbInputData.Items.Add("b = " + _b);
+            this._a = (n * sumXY(inputMatrix) - sumXsumY(inputMatrix)) / (n * sumXX(inputMatrix) - sumXsumX(inputMatrix));
+            this._b = (sumY(inputMatrix) - this._a * sumX(inputMatrix)) / n;
+        }
+        public double sumXY(double[,] inputMatrix)
+        {
+            double sumXY = 0;
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                sumXY += inputMatrix[i, 0] * inputMatrix[i, 1];
+            }
+            return sumXY;
+        }
+        public double sumY(double[,] inputMatrix)
+        {
+            double sumY = 0;
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                sumY += inputMatrix[i, 1];
+            }
+            return sumY;
+        }
+        public double sumX(double[,] inputMatrix)
+        {
+            double sumX = 0;
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                sumX += inputMatrix[i, 0];
+            }
+            return sumX;
+        }
+        public double sumXX(double[,] inputMatrix)
+        {
+            double sumXX = 0;
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                sumXX += inputMatrix[i, 0] * inputMatrix[i, 0];
+            }
+            return sumXX;
+        }             
+        public double sumXsumX(double[,] inputMatrix)
+        {
+            double sumX = 0;
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                sumX += inputMatrix[i, 0];
+            }
+            return Math.Pow(sumX, 2.0);
+        }     
+        public double sumXsumY(double[,] inputMatrix)
+        {
+            double sumX = 0;
+            double sumY = 0;
+            for (int i = 0; i < inputMatrix.GetLength(0); i++)
+            {
+                sumX += inputMatrix[i, 0];
+                sumY += inputMatrix[i, 1];
+            }
+            return sumX * sumY;
         }
         /// <summary>
         /// Разрабатываемый метод аппроксимации
         /// </summary>
         private void Method()
         {
-            List<Segment> segments = new List<Segment>();
             Segment segment = new Segment(X, Y, 0) { Number = 0 };
-            segments.Add(segment);
+            this.segments.Add(segment);
+            //LeastSquaresMethod(segment.T);
+            //this.CalculatingPracticalValue(segment.T);
+            //segment.Determination = this.CalculationDetermination(segment.Y, _vs);
+
             Segment segment1;
             do
             {
                 _offset++;
-                segment1 = new Segment(X, Y, _offset) { Number = 1 };
+                segment1 = new Segment(X, Y, _offset) 
+                {  
+                    Number = 1 
+                };
                 LeastSquaresMethod(segment1.T);
                 segment1.A = this._a;
                 segment1.B = this._b;
                 _rows -= 1;
                 this.CalculatingPracticalValue(segment1.T);
+                if (segment1.Y.Length == 0)
+                    break;
                 segment1.Determination = this.CalculationDetermination(segment1.Y, _vs);
             }
-            while (segment1.Determination < 0.85);
-            segments.Add(segment1);
+            while (segment1.Determination < 0.99);
+            this.segments.Add(segment1);
+            LbInputDataSecond.ItemsSource = this.segments;
         }
         /// <summary>
         /// Вычисление коэффициента детерминации

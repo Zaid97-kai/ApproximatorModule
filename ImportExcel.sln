@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImportExcel", "ImportExcel\ImportExcel.csproj", "{C7E92FDF-C470-4185-B8E8-5ADC7CA8D927}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectObjects", "ProjectObjects\ProjectObjects.csproj", "{30FFD8F2-9FCD-427D-BE1C-2E912D4CC4B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C7E92FDF-C470-4185-B8E8-5ADC7CA8D927}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7E92FDF-C470-4185-B8E8-5ADC7CA8D927}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7E92FDF-C470-4185-B8E8-5ADC7CA8D927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30FFD8F2-9FCD-427D-BE1C-2E912D4CC4B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30FFD8F2-9FCD-427D-BE1C-2E912D4CC4B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30FFD8F2-9FCD-427D-BE1C-2E912D4CC4B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30FFD8F2-9FCD-427D-BE1C-2E912D4CC4B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
