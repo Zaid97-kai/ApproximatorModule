@@ -64,6 +64,7 @@ namespace ImportExcel
         /// </summary>
         private double[] _vs;
         private static int _offset = 0;
+        private int _numberSegment = 0;
         private List<Segment> segments = new List<Segment>();
         private List<Node> nodesFirstTable = new List<Node>();
         private List<Node> nodesSecondTable = new List<Node>();
@@ -179,31 +180,44 @@ namespace ImportExcel
         /// </summary>
         private void Method()
         {
-            Segment segment = new Segment(X, Y, 0) { Number = 0 };
+            Segment segment = new Segment(X, Y, 0) { Number = _numberSegment };
             this.segments.Add(segment);
-            //LeastSquaresMethod(segment.T);
-            //this.CalculatingPracticalValue(segment.T);
-            //segment.Determination = this.CalculationDetermination(segment.Y, _vs);
-
+            LeastSquaresMethod(segment.T);
+            this.CalculatingPracticalValue(segment.T);
+            segment.Determination = this.CalculationDetermination(segment.Y, _vs);
             Segment segment1;
             do
             {
-                _offset++;
-                segment1 = new Segment(X, Y, _offset) 
-                {  
-                    Number = 1 
+                _numberSegment++;
+                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false) 
+                { 
+                    Number = _numberSegment 
                 };
-                LeastSquaresMethod(segment1.T);
-                segment1.A = this._a;
-                segment1.B = this._b;
-                _rows -= 1;
-                this.CalculatingPracticalValue(segment1.T);
-                if (segment1.Y.Length == 0)
-                    break;
-                segment1.Determination = this.CalculationDetermination(segment1.Y, _vs);
+                do
+                {
+                    _offset++;
+                    if (_numberSegment == 1)
+                    {
+                        segment1 = new Segment(X, Y, _offset)
+                        {
+                            Number = _numberSegment
+                        };
+                    }
+                    LeastSquaresMethod(segment1.T);
+                    segment1.A = this._a;
+                    segment1.B = this._b;
+                    _rows -= 1;
+                    this.CalculatingPracticalValue(segment1.T);
+                    if (segment1.Y.Length == 0)
+                        break;
+                    segment1.Determination = this.CalculationDetermination(segment1.Y, _vs);
+                }
+                while (segment1.Determination < 0.99);
+                this.segments.Add(segment1);            
+                _offset = 0;
             }
-            while (segment1.Determination < 0.99);
-            this.segments.Add(segment1);
+            while (segment1.X.Length > 0);
+
             LbInputDataSecond.ItemsSource = this.segments;
         }
         /// <summary>
