@@ -78,7 +78,7 @@ namespace ImportExcel
         private void BnOpenExcel_Click(object sender, RoutedEventArgs e)
         {
             ExportExcel();
-            LbInputData.Items.Clear();
+            //LbInputData.Items.Clear();
             string s;
             for (int i = 0; i < _rows; i++) // по всем строкам
             {
@@ -88,7 +88,7 @@ namespace ImportExcel
             }
             LeastSquaresMethod(this.list);
             CalculatingPracticalValue(this.list);
-            LbInputData.ItemsSource = this.nodesFirstTable;
+            //LbInputData.ItemsSource = this.nodesFirstTable;
 
             X = new double[_rows];
             Y = new double[_rows];
@@ -184,38 +184,38 @@ namespace ImportExcel
         private void Method()
         {
             CreateInitialSegment();
-            Segment segment1;
-            do
-            {
-                _numberSegment++;
-                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false)
-                {
-                    Number = _numberSegment
-                };
-                do
-                {
-                    _offset++;
-                    if (_numberSegment == 1)
-                    {
-                        segment1 = new Segment(X, Y, _offset)
-                        {
-                            Number = _numberSegment
-                        };
-                    }
-                    segment1.LeastSquaresMethod();
-                    _rows -= 1;
-                    segment1.CalculatingPracticalValue();
-                    if (segment1.X.Length == 0)
-                        break;
-                    segment1.Determination = this.CalculationDetermination(segment1.Y, _vs);
-                }
-                while (segment1.Determination < 0.99);
-                this.segments.Add(segment1);
-                _offset = 0;
-            }
-            while (segment1.X.Length > 0);
+            //Segment segment1;
+            //do
+            //{
+            //    _numberSegment++;
+            //    segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false)
+            //    {
+            //        Number = _numberSegment
+            //    };
+            //    do
+            //    {
+            //        _offset++;
+            //        if (_numberSegment == 1)
+            //        {
+            //            segment1 = new Segment(X, Y, _offset)
+            //            {
+            //                Number = _numberSegment
+            //            };
+            //        }
+            //        segment1.LeastSquaresMethod();
+            //        _rows -= 1;
+            //        segment1.CalculatingPracticalValue();
+            //        segment1.CalculationDetermination();
+            //        if (segment1.X.Length == 0)
+            //            break;
+            //    }
+            //    while (segment1.Determination < 0.985);
+            //    this.segments.Add(segment1);
+            //    _offset = 0;
+            //}
+            //while (segment1.X.Length > 0);
 
-            LbInputDataSecond.ItemsSource = this.segments;
+            //LbInputDataSecond.ItemsSource = this.segments;
         }
         /// <summary>
         /// Создание нулевого сегмента
@@ -226,6 +226,7 @@ namespace ImportExcel
             this.segments[0].LeastSquaresMethod();
             this.segments[0].CalculatingPracticalValue();
             this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs);
+            LbInputData.ItemsSource = segments;
         }
         /// <summary>
         /// Вычисление коэффициента детерминации

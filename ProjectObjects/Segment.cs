@@ -48,6 +48,14 @@ namespace ProjectObjects
         /// </summary>
         public int currentState;
         /// <summary>
+        /// Номер начального узла
+        /// </summary>
+        public int numberInitialNode;
+        /// <summary>
+        /// Номер конечного узла
+        /// </summary>
+        public int numberEndNode;
+        /// <summary>
         /// Конструктор класса Участок
         /// </summary>
         /// <param name="X">Вектор X</param>
@@ -59,6 +67,8 @@ namespace ProjectObjects
             this.Y = new double[X.Length - offset];
             if (flag)
             {
+                numberInitialNode = 0;
+                numberEndNode = X.Length - offset;
                 for (int i = 0; i < X.Length - offset; i++)
                 {
                     T[i, 0] = X[i];
@@ -69,6 +79,8 @@ namespace ProjectObjects
             }
             else
             {
+                numberInitialNode = offset;
+                numberEndNode = X.Length;
                 for(int i = 0; i < X.Length - offset; i++)
                 {
                     T[i, 0] = X[offset + i];
@@ -79,8 +91,38 @@ namespace ProjectObjects
             }
         }
         /// <summary>
+        /// Вычисление коэффициента детерминации
+        /// </summary>
+        /// <returns></returns>
+        public bool CalculationDetermination()
+        {
+            try
+            {
+                double Average = Y.Average();
+                double Numerator = 0;
+                double Denominator = 0;
+                for (int i = 0; i < Y.Length; i++)
+                {
+                    Numerator += (Y[i] - YPractical[i]) * (Y[i] - YPractical[i]);
+                    Denominator += (Y[i] - Average) * (Y[i] - Average);
+                }
+                Determination = 1 - Numerator / Denominator;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        /// <summary>
         /// Вычисление практического значения в методе наименьших квадратов
         /// </summary>
+        /// <summary>
+        /// Вычисление коэффициента детерминации
+        /// </summary>
+        /// <param name="Y">Вектор исходных значений</param>
+        /// <param name="YT">Вектор значений, полученных из модели</param>
+        /// <returns></returns>
         public void CalculatingPracticalValue()
         {
             YPractical = new double[X.Length];

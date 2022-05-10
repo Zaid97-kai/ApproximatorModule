@@ -17,10 +17,12 @@
         </Grid.ColumnDefinitions>
         <DataGrid Grid.Row="0" Grid.Column="0" x:Name="LbInputData" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="X" Binding="{Binding X}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Y" Binding="{Binding Y}"></DataGridTextColumn>
-                <DataGridTextColumn Header="F(X)" Binding="{Binding value}"></DataGridTextColumn>
-                <DataGridTextColumn Header="Δ" Binding="{Binding difference}"></DataGridTextColumn>
+                <DataGridTextColumn Header="Number" Binding="{Binding Path=Number}"></DataGridTextColumn>
+                <DataGridTextColumn Header="I" Binding="{Binding Path=numberInitialNode}"></DataGridTextColumn>
+                <DataGridTextColumn Header="J" Binding="{Binding Path=numberEndNode}"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" Binding="{Binding Path=A}"></DataGridTextColumn>
+                <DataGridTextColumn Header="B" Binding="{Binding Path=B}"></DataGridTextColumn>
+                <DataGridTextColumn Header="R2" Binding="{Binding Path=Determination}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid Grid.Row="0" Grid.Column="1" x:Name="LbInputDataSecond" AutoGenerateColumns="False">
