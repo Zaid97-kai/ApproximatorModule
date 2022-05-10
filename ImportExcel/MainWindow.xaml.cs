@@ -47,10 +47,6 @@ namespace ImportExcel
         private double[] Y;
         private int _rows = 0;
         private int _columns = 0;
-        private double _sumX = 0;
-        private double _sumXX = 0;
-        private double _sumY = 0;
-        private double _sumXY = 0;
         /// <summary>
         /// Коэффициент A линейной модели
         /// </summary>
@@ -68,7 +64,7 @@ namespace ImportExcel
         /// </summary>
         private static int _offset = 0;
         private int _numberSegment = 0;
-        private List<Segment> segments = new List<Segment>();
+        public List<ProjectObjects.Segment> segments = new List<ProjectObjects.Segment>();
         private List<Node> nodesFirstTable = new List<Node>();
         private List<Node> nodesSecondTable = new List<Node>();
         public MainWindow()
@@ -184,38 +180,37 @@ namespace ImportExcel
         private void Method()
         {
             CreateInitialSegment();
-            //Segment segment1;
-            //do
-            //{
-            //    _numberSegment++;
-            //    segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false)
-            //    {
-            //        Number = _numberSegment
-            //    };
-            //    do
-            //    {
-            //        _offset++;
-            //        if (_numberSegment == 1)
-            //        {
-            //            segment1 = new Segment(X, Y, _offset)
-            //            {
-            //                Number = _numberSegment
-            //            };
-            //        }
-            //        segment1.LeastSquaresMethod();
-            //        _rows -= 1;
-            //        segment1.CalculatingPracticalValue();
-            //        segment1.CalculationDetermination();
-            //        if (segment1.X.Length == 0)
-            //            break;
-            //    }
-            //    while (segment1.Determination < 0.985);
-            //    this.segments.Add(segment1);
-            //    _offset = 0;
-            //}
-            //while (segment1.X.Length > 0);
-
-            //LbInputDataSecond.ItemsSource = this.segments;
+            Segment segment1;
+            do
+            {
+                _numberSegment++;
+                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false)
+                {
+                    Number = _numberSegment
+                };
+                do
+                {
+                    _offset++;
+                    if (_numberSegment == 1)
+                    {
+                        segment1 = new Segment(X, Y, _offset)
+                        {
+                            Number = _numberSegment
+                        };
+                    }
+                    segment1.LeastSquaresMethod();
+                    _rows -= 1;
+                    segment1.CalculatingPracticalValue();
+                    segment1.CalculationDetermination();
+                    if (segment1.X.Length == 0)
+                        break;
+                }
+                while (segment1.Determination < 0.9935);
+                this.segments.Add(segment1); 
+                TbOutputData.Text += "Number = " + segment1.Number.ToString() + "\n" + "I = " + segment1.numberInitialNode.ToString() + "\n" + "J = " + segment1.numberEndNode.ToString() + "\n" + "A = " + segment1.A.ToString() + "\n" + "B = " + segment1.B.ToString() + "\n" + "R2 = " + segment1.Determination.ToString() + "\n\n\n";
+                _offset = 0;
+            }
+            while (segment1.X.Length > 0);
         }
         /// <summary>
         /// Создание нулевого сегмента
@@ -226,7 +221,7 @@ namespace ImportExcel
             this.segments[0].LeastSquaresMethod();
             this.segments[0].CalculatingPracticalValue();
             this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs);
-            LbInputData.ItemsSource = segments;
+            TbOutputData.Text += "Number = " + this.segments[0].Number.ToString() + "\n" + "I = " + this.segments[0].numberInitialNode.ToString() + "\n" + "J = " + this.segments[0].numberEndNode.ToString() + "\n" + "A = " + this.segments[0].A.ToString() + "\n" + "B = " + this.segments[0].B.ToString() + "\n" + "R2 = " + this.segments[0].Determination.ToString() + "\n\n\n";
         }
         /// <summary>
         /// Вычисление коэффициента детерминации

@@ -15,7 +15,9 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <DataGrid Grid.Row="0" Grid.Column="0" x:Name="LbInputData" AutoGenerateColumns="False">
+        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="TbOutputData">
+        </TextBlock>
+        <!--<DataGrid Grid.Row="0" Grid.Column="0" x:Name="LbInputData" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Number" Binding="{Binding Path=Number}"></DataGridTextColumn>
                 <DataGridTextColumn Header="I" Binding="{Binding Path=numberInitialNode}"></DataGridTextColumn>
@@ -24,7 +26,7 @@
                 <DataGridTextColumn Header="B" Binding="{Binding Path=B}"></DataGridTextColumn>
                 <DataGridTextColumn Header="R2" Binding="{Binding Path=Determination}"></DataGridTextColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </DataGrid>-->
         <DataGrid Grid.Row="0" Grid.Column="1" x:Name="LbInputDataSecond" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Number}"></DataGridTextColumn>
