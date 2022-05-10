@@ -63,6 +63,9 @@ namespace ImportExcel
         /// Вектор практических значений
         /// </summary>
         private double[] _vs;
+        /// <summary>
+        /// Величина смещения
+        /// </summary>
         private static int _offset = 0;
         private int _numberSegment = 0;
         private List<Segment> segments = new List<Segment>();
@@ -180,18 +183,14 @@ namespace ImportExcel
         /// </summary>
         private void Method()
         {
-            Segment segment = new Segment(X, Y, 0) { Number = _numberSegment };
-            this.segments.Add(segment);
-            LeastSquaresMethod(segment.T);
-            this.CalculatingPracticalValue(segment.T);
-            segment.Determination = this.CalculationDetermination(segment.Y, _vs);
+            CreateInitialSegment();
             Segment segment1;
             do
             {
                 _numberSegment++;
-                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false) 
-                { 
-                    Number = _numberSegment 
+                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false)
+                {
+                    Number = _numberSegment
                 };
                 do
                 {
@@ -203,22 +202,30 @@ namespace ImportExcel
                             Number = _numberSegment
                         };
                     }
-                    LeastSquaresMethod(segment1.T);
-                    segment1.A = this._a;
-                    segment1.B = this._b;
+                    segment1.LeastSquaresMethod();
                     _rows -= 1;
-                    this.CalculatingPracticalValue(segment1.T);
-                    if (segment1.Y.Length == 0)
+                    segment1.CalculatingPracticalValue();
+                    if (segment1.X.Length == 0)
                         break;
                     segment1.Determination = this.CalculationDetermination(segment1.Y, _vs);
                 }
                 while (segment1.Determination < 0.99);
-                this.segments.Add(segment1);            
+                this.segments.Add(segment1);
                 _offset = 0;
             }
             while (segment1.X.Length > 0);
 
             LbInputDataSecond.ItemsSource = this.segments;
+        }
+        /// <summary>
+        /// Создание нулевого сегмента
+        /// </summary>
+        private void CreateInitialSegment()
+        {
+            this.segments.Add(new Segment(X, Y, 0) { Number = _numberSegment });
+            this.segments[0].LeastSquaresMethod();
+            this.segments[0].CalculatingPracticalValue();
+            this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs);
         }
         /// <summary>
         /// Вычисление коэффициента детерминации
