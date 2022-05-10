@@ -184,31 +184,26 @@ namespace ImportExcel
             do
             {
                 _numberSegment++;
-                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1].X.Length, false)
+                segment1 = new Segment(X, Y, this.segments[_numberSegment - 1])
                 {
                     Number = _numberSegment
                 };
                 do
                 {
-                    _offset++;
-                    if (_numberSegment == 1)
+                    if (segment1.numberEndNode == segment1.numberInitialNode)
                     {
-                        segment1 = new Segment(X, Y, _offset)
-                        {
-                            Number = _numberSegment
-                        };
+                        return;
                     }
+                    segment1.numberEndNode--;
+                    segment1.UpdatingMatrices(X, Y);
                     segment1.LeastSquaresMethod();
-                    _rows -= 1;
                     segment1.CalculatingPracticalValue();
                     segment1.CalculationDetermination();
-                    if (segment1.X.Length == 0)
-                        break;
                 }
-                while (segment1.Determination < 0.9935);
-                this.segments.Add(segment1); 
+                while (segment1.Determination < 0.996);
+                segment1.numberInitialNode++;
+                this.segments.Add(segment1);
                 TbOutputData.Text += "Number = " + segment1.Number.ToString() + "\n" + "I = " + segment1.numberInitialNode.ToString() + "\n" + "J = " + segment1.numberEndNode.ToString() + "\n" + "A = " + segment1.A.ToString() + "\n" + "B = " + segment1.B.ToString() + "\n" + "R2 = " + segment1.Determination.ToString() + "\n\n\n";
-                _offset = 0;
             }
             while (segment1.X.Length > 0);
         }
@@ -217,7 +212,7 @@ namespace ImportExcel
         /// </summary>
         private void CreateInitialSegment()
         {
-            this.segments.Add(new Segment(X, Y, 0) { Number = _numberSegment });
+            this.segments.Add(new Segment(X, Y) { Number = _numberSegment });
             this.segments[0].LeastSquaresMethod();
             this.segments[0].CalculatingPracticalValue();
             this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs);

@@ -60,34 +60,46 @@ namespace ProjectObjects
         /// </summary>
         /// <param name="X">Вектор X</param>
         /// <param name="Y">Вектор Y</param>
-        public Segment(double[] X, double[] Y, int offset, bool flag = true)
+        public Segment(double[] X, double[] Y, Segment PreviousSegment = null)
         {
-            this.T = new double[X.Length - offset, 2];
-            this.X = new double[X.Length - offset];
-            this.Y = new double[X.Length - offset];
-            if (flag)
+            if (PreviousSegment == null || PreviousSegment.Number == 0)
             {
                 numberInitialNode = 0;
-                numberEndNode = X.Length - offset;
-                for (int i = 0; i < X.Length - offset; i++)
-                {
-                    T[i, 0] = X[i];
-                    T[i, 1] = Y[i];
-                    this.X[i] = X[i];
-                    this.Y[i] = Y[i];
-                }
+                numberEndNode = X.Length;
+                this.T = new double[X.Length, 2];
+                this.X = new double[X.Length];
+                this.Y = new double[Y.Length];
             }
             else
             {
-                numberInitialNode = offset;
+                numberInitialNode = PreviousSegment.numberEndNode;
                 numberEndNode = X.Length;
-                for(int i = 0; i < X.Length - offset; i++)
-                {
-                    T[i, 0] = X[offset + i];
-                    T[i, 1] = Y[offset + i];
-                    this.X[i] = X[offset + i];
-                    this.Y[i] = Y[offset + i];
-                }
+                this.T = new double[numberEndNode - numberInitialNode, 2];
+                this.X = new double[numberEndNode - numberInitialNode];
+                this.Y = new double[numberEndNode - numberInitialNode];
+            }
+            for (int i = 0; i < numberEndNode - numberInitialNode; i++)
+            {
+                T[i, 0] = X[numberInitialNode + i];
+                T[i, 1] = Y[numberInitialNode + i];
+                this.X[i] = X[numberInitialNode + i];
+                this.Y[i] = Y[numberInitialNode + i];
+            }
+        }
+        /// <summary>
+        /// Обновление матриц X, Y, T
+        /// </summary>
+        public void UpdatingMatrices(double[] X, double[] Y)
+        {
+            this.T = new double[numberEndNode - numberInitialNode, 2];
+            this.X = new double[numberEndNode - numberInitialNode];
+            this.Y = new double[numberEndNode - numberInitialNode];
+            for (int i = 0; i < numberEndNode - numberInitialNode; i++)
+            {
+                T[i, 0] = X[numberInitialNode + i];
+                T[i, 1] = Y[numberInitialNode + i];
+                this.X[i] = X[numberInitialNode + i];
+                this.Y[i] = Y[numberInitialNode + i];
             }
         }
         /// <summary>
