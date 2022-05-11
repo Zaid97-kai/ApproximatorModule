@@ -5,19 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImportExcel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Главное окно" Height="450" Width="800" MinHeight="450" MinWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="9*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.Column="0" x:Name="TbOutputData">
-        </TextBlock>
-        <!--<DataGrid Grid.Row="0" Grid.Column="0" x:Name="LbInputData" AutoGenerateColumns="False">
+        <DataGrid x:Name="LbInputDataSecond" AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Number" Binding="{Binding Path=Number}"></DataGridTextColumn>
                 <DataGridTextColumn Header="I" Binding="{Binding Path=numberInitialNode}"></DataGridTextColumn>
@@ -25,12 +19,6 @@
                 <DataGridTextColumn Header="A" Binding="{Binding Path=A}"></DataGridTextColumn>
                 <DataGridTextColumn Header="B" Binding="{Binding Path=B}"></DataGridTextColumn>
                 <DataGridTextColumn Header="R2" Binding="{Binding Path=Determination}"></DataGridTextColumn>
-            </DataGrid.Columns>
-        </DataGrid>-->
-        <DataGrid Grid.Row="0" Grid.Column="1" x:Name="LbInputDataSecond" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Number}"></DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Determination}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Button Grid.Row="1" x:Name="BnOpenExcel" Click="BnOpenExcel_Click">Open</Button>

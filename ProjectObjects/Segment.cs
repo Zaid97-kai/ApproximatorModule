@@ -14,47 +14,47 @@ namespace ProjectObjects
         /// <summary>
         /// Таблица XY
         /// </summary>
-        public double[,] T;
+        public double[,] T { get; set; }
         /// <summary>
         /// Вектор X
         /// </summary>
-        public double[] X;
+        public double[] X { get; set; }
         /// <summary>
         /// Вектор Y
         /// </summary>
-        public double[] Y;
+        public double[] Y { get; set; }
         /// <summary>
         /// Номер участка
         /// </summary>
-        public int Number;
+        public int Number { get; set; }
         /// <summary>
         /// Коэффициент A линейной модели
         /// </summary>
-        public double A;
+        public double A { get; set; }
         /// <summary>
         /// Коэффициент B линейной модели
         /// </summary>
-        public double B;
+        public double B { get; set; }
         /// <summary>
         /// Практические значения Y
         /// </summary>
-        public double[] YPractical;
+        public double[] YPractical { get; set; }
         /// <summary>
         /// Коэффициент детерминации
         /// </summary>
-        public double Determination;
+        public double Determination { get; set; }
         /// <summary>
         /// Текущая позиция
         /// </summary>
-        public int currentState;
+        public int currentState { get; set; }
         /// <summary>
         /// Номер начального узла
         /// </summary>
-        public int numberInitialNode;
+        public int numberInitialNode { get; set; }
         /// <summary>
         /// Номер конечного узла
         /// </summary>
-        public int numberEndNode;
+        public int numberEndNode { get; set; }
         /// <summary>
         /// Конструктор класса Участок
         /// </summary>

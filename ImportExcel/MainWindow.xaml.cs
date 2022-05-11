@@ -15,27 +15,33 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Excel = Microsoft.Office.Interop.Excel;
-
 namespace ImportExcel
 {
     /// <summary>
     /// Узел таблицы
     /// </summary>
-    public partial class Node
+    public class Node
     {
-        public double X { get; set; }
         /// <summary>
-        /// Теоретическое значение
+        /// Номер участка
         /// </summary>
-        public double Y { get; set; }
+        public int Number { get; set; }
         /// <summary>
-        /// Практическое значение
+        /// Коэффициент A линейной модели
         /// </summary>
-        public double value { get; set; }
+        public double A { get; set; }
         /// <summary>
-        /// Разность между практическим и теоретическим значением
+        /// Коэффициент B линейной модели
         /// </summary>
-        public double difference { get; set; }
+        public double B { get; set; }
+        /// <summary>
+        /// Номер начального узла
+        /// </summary>
+        public int numberInitialNode { get; set; }
+        /// <summary>
+        /// Номер конечного узла
+        /// </summary>
+        public int numberEndNode { get; set; }
     }
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -65,8 +71,7 @@ namespace ImportExcel
         private static int _offset = 0;
         private int _numberSegment = 0;
         public List<ProjectObjects.Segment> segments = new List<ProjectObjects.Segment>();
-        private List<Node> nodesFirstTable = new List<Node>();
-        private List<Node> nodesSecondTable = new List<Node>();
+        private List<Node> nodesTable = new List<Node>();
         public MainWindow()
         {
             InitializeComponent();
@@ -94,6 +99,7 @@ namespace ImportExcel
                 Y[i] = list[i, 1];
             }
             Method();
+            LbInputDataSecond.ItemsSource = segments;
         }
         /// <summary>
         /// Вычисление практического значения в методе наименьших квадратов
@@ -104,7 +110,6 @@ namespace ImportExcel
             for (int i = 0; i < _rows; i++)
             {
                 this._vs[i] = this._a * inputMatrix[i, 0] + this._b;
-                this.nodesFirstTable.Add(new Node() { value = this._vs[i], X = inputMatrix[i, 0], Y = inputMatrix[i, 1], difference = Math.Abs(this._vs[i] - inputMatrix[i, 1]) });
             }
         }
         /// <summary>
@@ -203,7 +208,6 @@ namespace ImportExcel
                 while (segment1.Determination < 0.996);
                 segment1.numberInitialNode++;
                 this.segments.Add(segment1);
-                TbOutputData.Text += "Number = " + segment1.Number.ToString() + "\n" + "I = " + segment1.numberInitialNode.ToString() + "\n" + "J = " + segment1.numberEndNode.ToString() + "\n" + "A = " + segment1.A.ToString() + "\n" + "B = " + segment1.B.ToString() + "\n" + "R2 = " + segment1.Determination.ToString() + "\n\n\n";
             }
             while (segment1.X.Length > 0);
         }
@@ -213,10 +217,10 @@ namespace ImportExcel
         private void CreateInitialSegment()
         {
             this.segments.Add(new Segment(X, Y) { Number = _numberSegment });
+            this.nodesTable.Add(new Node() { A = this.segments[0].A, B = this.segments[0].B, Number = this.segments[0].Number, numberEndNode = this.segments[0].numberEndNode, numberInitialNode = this.segments[0].numberInitialNode });
             this.segments[0].LeastSquaresMethod();
             this.segments[0].CalculatingPracticalValue();
-            this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs);
-            TbOutputData.Text += "Number = " + this.segments[0].Number.ToString() + "\n" + "I = " + this.segments[0].numberInitialNode.ToString() + "\n" + "J = " + this.segments[0].numberEndNode.ToString() + "\n" + "A = " + this.segments[0].A.ToString() + "\n" + "B = " + this.segments[0].B.ToString() + "\n" + "R2 = " + this.segments[0].Determination.ToString() + "\n\n\n";
+            this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs); 
         }
         /// <summary>
         /// Вычисление коэффициента детерминации
