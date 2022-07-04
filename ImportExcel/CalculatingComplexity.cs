@@ -33,5 +33,16 @@ namespace ImportExcel
         /// </summary>
         public  CalculatingComplexity()
         { }
+        /// <summary>
+        /// Метод, обнуляющий счетчик операций
+        /// </summary>
+        public void NullCalculatingComplexity()
+        {
+            CountComparisons = 0;
+            CountDivisions = 0;
+            CountAdditions = 0;
+            CountMultiplications = 0;
+            CountSubtractions = 0;
+        }
     }
 }

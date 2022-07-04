@@ -30,6 +30,13 @@
                 <DataGridTextColumn Header="R2" Binding="{Binding Path=Determination}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="2" x:Name="BnOpenExcel" Click="BnOpenExcel_Click">Open</Button>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" x:Name="BnOpenExcelSecond" Click="BnOpenExcelSecond_Click">Open Second Mode</Button>
+            <Button Grid.Column="0" x:Name="BnOpenExcel" Click="BnOpenExcel_Click">Open First Mode</Button>
+        </Grid>
     </Grid>
 </Window>

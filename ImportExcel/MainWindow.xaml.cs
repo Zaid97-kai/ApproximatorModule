@@ -67,28 +67,45 @@ namespace ImportExcel
         /// </summary>
         private double[] _vs;
         /// <summary>
-        /// Величина смещения
+        /// Номер рассматриваемого сегмента
         /// </summary>
-        private static int _offset = 0;
         private int _numberSegment = 0;
+        /// <summary>
+        /// Множество сегментов
+        /// </summary>
         public List<ProjectObjects.Segment> segments = new List<ProjectObjects.Segment>();
+        /// <summary>
+        /// Множество узлов
+        /// </summary>
         private List<Node> nodesTable = new List<Node>();
+        /// <summary>
+        /// Допустимое значение точности
+        /// </summary>
         private double AcceptableAccuracyValue = 0.0;
+        /// <summary>
+        /// Конструктор главного окна
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
             TbAcceptableAccuracy.Text = "0,996";
             this._calculatingComplexity = new CalculatingComplexity();
         }
+        /// <summary>
+        /// Обработка нажатия на кнопку Open
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BnOpenExcel_Click(object sender, RoutedEventArgs e)
         {
+            _calculatingComplexity.NullCalculatingComplexity();
             if(!Double.TryParse(TbAcceptableAccuracy.Text, out AcceptableAccuracyValue))
             {
                 MessageBox.Show("Введено недопустимое значение точности вычислений!");
                 return;
             }
             ExportExcel();
-            //LbInputData.Items.Clear();
+            
             string s;
             for (int i = 0; i < _rows; i++) // по всем строкам
             {
@@ -98,7 +115,6 @@ namespace ImportExcel
             }
             LeastSquaresMethod(this.list);
             CalculatingPracticalValue(this.list);
-            //LbInputData.ItemsSource = this.nodesFirstTable;
 
             X = new double[_rows];
             Y = new double[_rows];
@@ -118,6 +134,7 @@ namespace ImportExcel
         /// <summary>
         /// Вычисление практического значения в методе наименьших квадратов
         /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
         private void CalculatingPracticalValue(double[,] inputMatrix)
         {
             this._vs = new double[_rows];
@@ -137,7 +154,7 @@ namespace ImportExcel
         {
             int n = inputMatrix.GetLength(0);
 
-            this._a = (n * sumXY(inputMatrix) - sumXsumY(inputMatrix)) / (n * sumXX(inputMatrix) - sumXsumX(inputMatrix));
+            this._a = (n * SumXY(inputMatrix) - sumXsumY(inputMatrix)) / (n * SumXX(inputMatrix) - SumXsumX(inputMatrix));
 
             _calculatingComplexity.CountMultiplications++;
             _calculatingComplexity.CountSubtractions++;
@@ -145,13 +162,18 @@ namespace ImportExcel
             _calculatingComplexity.CountSubtractions++;
             _calculatingComplexity.CountDivisions++;
 
-            this._b = (sumY(inputMatrix) - this._a * sumX(inputMatrix)) / n;
+            this._b = (SumY(inputMatrix) - this._a * SumX(inputMatrix)) / n;
 
             _calculatingComplexity.CountMultiplications++;
             _calculatingComplexity.CountMultiplications++;
             _calculatingComplexity.CountSubtractions++;
         }
-        public double sumXY(double[,] inputMatrix)
+        /// <summary>
+        /// Вычисление суммы произведений XY для метода наименьших квадратов
+        /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        /// <returns>Сумма произведений XY</returns>
+        public double SumXY(double[,] inputMatrix)
         {
             double sumXY = 0;
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
@@ -163,7 +185,12 @@ namespace ImportExcel
             }
             return sumXY;
         }
-        public double sumY(double[,] inputMatrix)
+        /// <summary>
+        /// Вычисление суммы Y для метода наименьших квадратов
+        /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        /// <returns>Сумма Y</returns>
+        public double SumY(double[,] inputMatrix)
         {
             double sumY = 0;
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
@@ -174,7 +201,12 @@ namespace ImportExcel
             }
             return sumY;
         }
-        public double sumX(double[,] inputMatrix)
+        /// <summary>
+        /// Вычисление суммы X для метода наименьших квадратов
+        /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        /// <returns>Сумма X</returns>
+        public double SumX(double[,] inputMatrix)
         {
             double sumX = 0;
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
@@ -185,7 +217,12 @@ namespace ImportExcel
             }
             return sumX;
         }
-        public double sumXX(double[,] inputMatrix)
+        /// <summary>
+        /// Вычисление суммы произведений XX для метода наименьших квадратов
+        /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        /// <returns>Сумма произведений XX</returns>
+        public double SumXX(double[,] inputMatrix)
         {
             double sumXX = 0;
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
@@ -196,8 +233,13 @@ namespace ImportExcel
                 _calculatingComplexity.CountMultiplications++;
             }
             return sumXX;
-        }             
-        public double sumXsumX(double[,] inputMatrix)
+        }
+        /// <summary>
+        /// Вычисление произведения суммы квадратов X для метода наименьших квадратов
+        /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        /// <returns>Произведение суммы квадратов X</returns>
+        public double SumXsumX(double[,] inputMatrix)
         {
             double sumX = 0;
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
@@ -209,7 +251,12 @@ namespace ImportExcel
 
             _calculatingComplexity.CountMultiplications++;
             return Math.Pow(sumX, 2.0);
-        }     
+        }
+        /// <summary>
+        /// Вычисление произведения суммы X на сумму Y для метода наименьших квадратов
+        /// </summary>
+        /// <param name="inputMatrix">Входная матрица значений X-Y</param>
+        /// <returns>Произведение суммы X на сумму Y</returns>
         public double sumXsumY(double[,] inputMatrix)
         {
             double sumX = 0;
@@ -261,12 +308,64 @@ namespace ImportExcel
             while (segment1.X.Length > 0);
         }
         /// <summary>
+        /// Сравнение сегментов
+        /// </summary>
+        /// <param name="segments">Множество сегментов</param>
+        /// <returns></returns>
+        private bool SegmentComparison(List<Segment> segments)
+        {
+            bool flag = true;
+            for (int i = 0; i < segments.Count; i++)
+            {
+                if(segments[i].Determination > AcceptableAccuracyValue)
+                {
+                    flag = true;
+                }
+                else
+                {
+                    flag = false;
+                }
+            }
+            return flag;
+        }
+        /// <summary>
+        /// Метод с постоянным шагом
+        /// </summary>
+        private void SecondMethod()
+        {
+            CreateInitialSegment();
+            
+            int CountSegments = 2;
+
+            while (SegmentComparison(segments))
+            {
+                for (int i = 0; i < CountSegments; i++)
+                {
+                    segments.Add(new Segment(X, Y, segments[segments.Count - 1])
+                    { 
+                        numberInitialNode = segments[segments.Count - 1].numberInitialNode,
+                        numberEndNode = segments[segments.Count - 1].numberEndNode / CountSegments + segments[segments.Count - 1].numberEndNode / CountSegments * i
+                    });
+                    segments[segments.Count - 1].LeastSquaresMethod();
+                    segments[segments.Count - 1].CalculatingPracticalValue();
+                    segments[segments.Count - 1].Determination = CalculationDetermination(segments[segments.Count].Y, _vs);
+                }
+            }
+        }
+        /// <summary>
         /// Создание нулевого сегмента
         /// </summary>
         private void CreateInitialSegment()
         {
             this.segments.Add(new Segment(X, Y) { Number = _numberSegment });
-            this.nodesTable.Add(new Node() { A = this.segments[0].A, B = this.segments[0].B, Number = this.segments[0].Number, numberEndNode = this.segments[0].numberEndNode, numberInitialNode = this.segments[0].numberInitialNode });
+            this.nodesTable.Add(new Node() 
+            { 
+                A = this.segments[0].A, 
+                B = this.segments[0].B, 
+                Number = this.segments[0].Number, 
+                numberEndNode = this.segments[0].numberEndNode, 
+                numberInitialNode = this.segments[0].numberInitialNode 
+            });
             this.segments[0].LeastSquaresMethod();
             this.segments[0].CalculatingPracticalValue();
             this.segments[0].Determination = this.CalculationDetermination(this.segments[0].Y, _vs); 
@@ -324,6 +423,11 @@ namespace ImportExcel
             ObjWorkBook.Close(false, Type.Missing, Type.Missing); //закрыть не сохраняя
             ObjWorkExcel.Quit(); // выйти из Excel
             GC.Collect(); // убрать за собой
+        }
+
+        private void BnOpenExcelSecond_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
