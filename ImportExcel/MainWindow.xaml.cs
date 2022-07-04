@@ -48,6 +48,7 @@ namespace ImportExcel
     /// </summary>
     public partial class MainWindow : Window
     {
+        private CalculatingComplexity _calculatingComplexity;
         private double[,] list;
         private double[] X;
         private double[] Y;
@@ -72,12 +73,20 @@ namespace ImportExcel
         private int _numberSegment = 0;
         public List<ProjectObjects.Segment> segments = new List<ProjectObjects.Segment>();
         private List<Node> nodesTable = new List<Node>();
+        private double AcceptableAccuracyValue = 0.0;
         public MainWindow()
         {
             InitializeComponent();
+            TbAcceptableAccuracy.Text = "0,996";
+            this._calculatingComplexity = new CalculatingComplexity();
         }
         private void BnOpenExcel_Click(object sender, RoutedEventArgs e)
         {
+            if(!Double.TryParse(TbAcceptableAccuracy.Text, out AcceptableAccuracyValue))
+            {
+                MessageBox.Show("Введено недопустимое значение точности вычислений!");
+                return;
+            }
             ExportExcel();
             //LbInputData.Items.Clear();
             string s;
@@ -110,6 +119,9 @@ namespace ImportExcel
             for (int i = 0; i < _rows; i++)
             {
                 this._vs[i] = this._a * inputMatrix[i, 0] + this._b;
+
+                _calculatingComplexity.CountAdditions++;
+                _calculatingComplexity.CountMultiplications++;            
             }
         }
         /// <summary>
@@ -121,7 +133,18 @@ namespace ImportExcel
             int n = inputMatrix.GetLength(0);
 
             this._a = (n * sumXY(inputMatrix) - sumXsumY(inputMatrix)) / (n * sumXX(inputMatrix) - sumXsumX(inputMatrix));
+
+            _calculatingComplexity.CountMultiplications++;
+            _calculatingComplexity.CountSubtractions++;
+            _calculatingComplexity.CountMultiplications++;
+            _calculatingComplexity.CountSubtractions++;
+            _calculatingComplexity.CountDivisions++;
+
             this._b = (sumY(inputMatrix) - this._a * sumX(inputMatrix)) / n;
+
+            _calculatingComplexity.CountMultiplications++;
+            _calculatingComplexity.CountMultiplications++;
+            _calculatingComplexity.CountSubtractions++;
         }
         public double sumXY(double[,] inputMatrix)
         {
@@ -129,6 +152,9 @@ namespace ImportExcel
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
             {
                 sumXY += inputMatrix[i, 0] * inputMatrix[i, 1];
+
+                _calculatingComplexity.CountAdditions++;
+                _calculatingComplexity.CountMultiplications++;
             }
             return sumXY;
         }
@@ -138,6 +164,8 @@ namespace ImportExcel
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
             {
                 sumY += inputMatrix[i, 1];
+
+                _calculatingComplexity.CountAdditions++;
             }
             return sumY;
         }
@@ -147,6 +175,8 @@ namespace ImportExcel
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
             {
                 sumX += inputMatrix[i, 0];
+
+                _calculatingComplexity.CountAdditions++;
             }
             return sumX;
         }
@@ -156,6 +186,9 @@ namespace ImportExcel
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
             {
                 sumXX += inputMatrix[i, 0] * inputMatrix[i, 0];
+
+                _calculatingComplexity.CountAdditions++;
+                _calculatingComplexity.CountMultiplications++;
             }
             return sumXX;
         }             
@@ -165,7 +198,11 @@ namespace ImportExcel
             for (int i = 0; i < inputMatrix.GetLength(0); i++)
             {
                 sumX += inputMatrix[i, 0];
+
+                _calculatingComplexity.CountAdditions++;
             }
+
+            _calculatingComplexity.CountMultiplications++;
             return Math.Pow(sumX, 2.0);
         }     
         public double sumXsumY(double[,] inputMatrix)
@@ -176,7 +213,12 @@ namespace ImportExcel
             {
                 sumX += inputMatrix[i, 0];
                 sumY += inputMatrix[i, 1];
+
+                _calculatingComplexity.CountAdditions++;
+                _calculatingComplexity.CountAdditions++;
             }
+
+            _calculatingComplexity.CountMultiplications++;
             return sumX * sumY;
         }
         /// <summary>
@@ -205,7 +247,7 @@ namespace ImportExcel
                     segment1.CalculatingPracticalValue();
                     segment1.CalculationDetermination();
                 }
-                while (segment1.Determination < 0.996);
+                while (segment1.Determination < AcceptableAccuracyValue);
                 segment1.numberInitialNode++;
                 this.segments.Add(segment1);
             }
