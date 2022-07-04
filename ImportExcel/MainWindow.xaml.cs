@@ -109,6 +109,11 @@ namespace ImportExcel
             }
             Method();
             LbInputDataSecond.ItemsSource = segments;
+            MessageBox.Show($"Количество сравнений = {_calculatingComplexity.CountComparisons}\n" +
+                $"Количество сложений = {_calculatingComplexity.CountAdditions}\n" +
+                $"Количество вычитаний = {_calculatingComplexity.CountSubtractions}\n" +
+                $"Количество умножений = {_calculatingComplexity.CountMultiplications}\n" +
+                $"Количество делений = {_calculatingComplexity.CountDivisions}");
         }
         /// <summary>
         /// Вычисление практического значения в методе наименьших квадратов
@@ -246,6 +251,8 @@ namespace ImportExcel
                     segment1.LeastSquaresMethod();
                     segment1.CalculatingPracticalValue();
                     segment1.CalculationDetermination();
+
+                    _calculatingComplexity.CountComparisons++;
                 }
                 while (segment1.Determination < AcceptableAccuracyValue);
                 segment1.numberInitialNode++;

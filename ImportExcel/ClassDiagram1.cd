@@ -1,35 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="ImportExcel.App">
-    <Position X="4.5" Y="0.5" Width="1.5" />
+    <Position X="5" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>App.xaml.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="ImportExcel.CalculatingComplexity">
+    <Position X="4.75" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEBAAAAEAAAAAAAAAAAAAAAAAAAAEAAAAAEAA=</HashCode>
+      <FileName>CalculatingComplexity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="ImportExcel.Node">
-    <Position X="10.5" Y="2.5" Width="2.5" />
+    <Position X="5" Y="3" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAIAAAAAAEAgAAAAAAAAAAAAAAAAIAEAAAA=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ImportExcel.MainWindow" BaseTypeListCollapsed="true">
-    <Position X="6.25" Y="0.5" Width="4" />
+    <Position X="9.5" Y="0.5" Width="4" />
     <TypeIdentifier>
-      <HashCode>AAAAA6YAQgAEQACAIABgIAAAAAAgAEAAgAAACYAAYAg=</HashCode>
+      <HashCode>AAAAA6YAQgAEQACAIABgIAAAAAAgAEAAgAAAiYAAYAg=</HashCode>
       <FileName>MainWindow.xaml.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
+    <ShowAsAssociation>
+      <Field Name="_calculatingComplexity" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Field Name="nodesTable" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ImportExcel.Properties.Resources">
-    <Position X="2.75" Y="1.75" Width="3.25" />
+    <Position X="1.5" Y="3" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ImportExcel.Properties.Settings">
-    <Position X="10.5" Y="0.5" Width="2" />
+    <Position X="2.5" Y="1" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
