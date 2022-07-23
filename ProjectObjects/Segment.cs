@@ -87,6 +87,31 @@ namespace ProjectObjects
             }
         }
         /// <summary>
+        /// Конструктор класса Участок
+        /// </summary>
+        /// <param name="X">Вектор X</param>
+        /// <param name="Y">Вектор Y</param>
+        /// <param name="numberInitialNode">Индекс стартового узла</param>
+        /// <param name="numberEndNode">Индекс конечного узла</param>
+        /// <param name="PreviousSegment">Предыдущий сегмент</param>
+        public Segment(double[] X, double[] Y, int numberInitialNode, int numberEndNode, Segment PreviousSegment = null)
+        {
+            this.numberInitialNode = numberInitialNode;
+            this.numberEndNode = numberEndNode;
+
+            this.T = new double[numberEndNode - numberInitialNode, 2];
+            this.X = new double[numberEndNode - numberInitialNode];
+            this.Y = new double[numberEndNode - numberInitialNode];
+
+            for (int i = 0; i < numberEndNode - numberInitialNode; i++)
+            {
+                T[i, 0] = X[numberInitialNode + i];
+                T[i, 1] = Y[numberInitialNode + i];
+                this.X[i] = X[numberInitialNode + i];
+                this.Y[i] = Y[numberInitialNode + i];
+            }
+        }
+        /// <summary>
         /// Обновление матриц X, Y, T
         /// </summary>
         public void UpdatingMatrices(double[] X, double[] Y)

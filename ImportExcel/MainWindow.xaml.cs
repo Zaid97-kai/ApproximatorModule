@@ -324,6 +324,8 @@ namespace ImportExcel
                 else
                 {
                     flag = false;
+                    segments.RemoveRange(1, segments.Count - 1);
+                    break;
                 }
             }
             return flag;
@@ -333,26 +335,27 @@ namespace ImportExcel
         /// </summary>
         private void SecondMethod()
         {
-            CreateInitialSegment();
-            
-            int CountSegments = 2;
+            int CountSegments = 1;
 
             do
             {
+                CountSegments++;
+                if(segments[0].numberEndNode / CountSegments == 1)
+                {
+                    return;
+                }
                 for (int i = 0; i < CountSegments; i++)
                 {
-                    segments.Add(new Segment(X, Y, segments[segments.Count - 1])
+                    segments.Add(new Segment(X, Y, segments[0].numberEndNode / CountSegments * (i + 1) - segments[0].numberEndNode / CountSegments, segments[0].numberEndNode / CountSegments * (i + 1), segments[segments.Count - 1])
                     {
-                        numberInitialNode = segments[segments.Count - 1].numberEndNode * i,
-                        numberEndNode = segments[0].numberEndNode / CountSegments * (i + 1)
-                        //numberEndNode = segments[segments.Count - 1].numberEndNode / CountSegments + segments[segments.Count - 1].numberEndNode / CountSegments * i
-                    }); ;
+                        Number = i + 1
+                    });
                     segments[segments.Count - 1].LeastSquaresMethod();
                     segments[segments.Count - 1].CalculatingPracticalValue();
-                    segments[segments.Count - 1].Determination = CalculationDetermination(segments[segments.Count - 1].Y, _vs);
+                    segments[segments.Count - 1].Determination = CalculationDetermination(segments[segments.Count - 1].Y, segments[segments.Count - 1].YPractical);
                 }
             }
-            while (SegmentComparison(segments));
+            while (!SegmentComparison(segments));
         }
         /// <summary>
         /// Создание нулевого сегмента
@@ -453,7 +456,15 @@ namespace ImportExcel
                 X[i] = list[i, 0];
                 Y[i] = list[i, 1];
             }
-            SecondMethod();
+
+            CreateInitialSegment();
+            do
+            {
+                SecondMethod();
+                AcceptableAccuracyValue = AcceptableAccuracyValue - 0.001;
+                TbAcceptableAccuracy.Text = AcceptableAccuracyValue.ToString();
+            }
+            while (segments.Count == 1);
             LbInputDataSecond.ItemsSource = segments;
         }
     }
