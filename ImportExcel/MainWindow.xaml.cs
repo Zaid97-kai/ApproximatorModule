@@ -337,20 +337,22 @@ namespace ImportExcel
             
             int CountSegments = 2;
 
-            while (SegmentComparison(segments))
+            do
             {
                 for (int i = 0; i < CountSegments; i++)
                 {
                     segments.Add(new Segment(X, Y, segments[segments.Count - 1])
-                    { 
-                        numberInitialNode = segments[segments.Count - 1].numberInitialNode,
-                        numberEndNode = segments[segments.Count - 1].numberEndNode / CountSegments + segments[segments.Count - 1].numberEndNode / CountSegments * i
-                    });
+                    {
+                        numberInitialNode = segments[segments.Count - 1].numberEndNode * i,
+                        numberEndNode = segments[0].numberEndNode / CountSegments * (i + 1)
+                        //numberEndNode = segments[segments.Count - 1].numberEndNode / CountSegments + segments[segments.Count - 1].numberEndNode / CountSegments * i
+                    }); ;
                     segments[segments.Count - 1].LeastSquaresMethod();
                     segments[segments.Count - 1].CalculatingPracticalValue();
-                    segments[segments.Count - 1].Determination = CalculationDetermination(segments[segments.Count].Y, _vs);
+                    segments[segments.Count - 1].Determination = CalculationDetermination(segments[segments.Count - 1].Y, _vs);
                 }
             }
+            while (SegmentComparison(segments));
         }
         /// <summary>
         /// Создание нулевого сегмента
@@ -427,7 +429,32 @@ namespace ImportExcel
 
         private void BnOpenExcelSecond_Click(object sender, RoutedEventArgs e)
         {
+            if (!Double.TryParse(TbAcceptableAccuracy.Text, out AcceptableAccuracyValue))
+            {
+                MessageBox.Show("Введено недопустимое значение точности вычислений!");
+                return;
+            }
+            ExportExcel();
 
+            string s;
+            for (int i = 0; i < _rows; i++) // по всем строкам
+            {
+                s = "";
+                for (int j = 0; j < _columns; j++) //по всем колонкам
+                    s += " | " + list[i, j];
+            }
+            LeastSquaresMethod(this.list);
+            CalculatingPracticalValue(this.list);
+
+            X = new double[_rows];
+            Y = new double[_rows];
+            for (int i = 0; i < _rows; i++)
+            {
+                X[i] = list[i, 0];
+                Y[i] = list[i, 1];
+            }
+            SecondMethod();
+            LbInputDataSecond.ItemsSource = segments;
         }
     }
 }
