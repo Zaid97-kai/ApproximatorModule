@@ -41,8 +41,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlgorithmClasses\DevelopedMethod.cs" />
+    <Compile Include="AlgorithmClasses\GreedyAlgorithm.cs" />
+    <Compile Include="CalculatingComplexity.cs" />
     <Compile Include="Segment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TemporaryClasses\AuxiliaryTools.cs" />
+    <Compile Include="TemporaryClasses\Node.cs" />
+    <Compile Include="TemporaryClasses\SegmentContainer.cs" />
+    <Compile Include="TemporaryClasses\TemporarySegment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram2.cd" />
