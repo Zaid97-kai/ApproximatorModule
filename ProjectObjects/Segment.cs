@@ -46,15 +46,19 @@ namespace ProjectObjects
         /// <summary>
         /// Текущая позиция
         /// </summary>
-        public int currentState { get; set; }
+        public int CurrentState { get; set; }
         /// <summary>
         /// Номер начального узла
         /// </summary>
-        public int numberInitialNode { get; set; }
+        public int NumberInitialNode { get; set; }
         /// <summary>
         /// Номер конечного узла
         /// </summary>
-        public int numberEndNode { get; set; }
+        public int NumberEndNode { get; set; }
+        /// <summary>
+        /// Длина сегмента
+        /// </summary>
+        public int SegmentLength { get; set; }
         /// <summary>
         /// Конструктор класса Участок
         /// </summary>
@@ -64,20 +68,48 @@ namespace ProjectObjects
         {
             if (PreviousSegment == null || PreviousSegment.Number == 0)
             {
-                numberInitialNode = 0;
-                numberEndNode = X.Length;
+                NumberInitialNode = 0;
+                NumberEndNode = X.Length;
+                SegmentLength = NumberEndNode - NumberInitialNode;
                 this.T = new double[X.Length, 2];
                 this.X = new double[X.Length];
                 this.Y = new double[Y.Length];
             }
             else
             {
-                numberInitialNode = PreviousSegment.numberEndNode;
-                numberEndNode = X.Length;
-                this.T = new double[numberEndNode - numberInitialNode, 2];
-                this.X = new double[numberEndNode - numberInitialNode];
-                this.Y = new double[numberEndNode - numberInitialNode];
+                NumberInitialNode = PreviousSegment.NumberEndNode;
+                NumberEndNode = X.Length;
+                SegmentLength = NumberEndNode - NumberInitialNode;
+                this.T = new double[NumberEndNode - NumberInitialNode, 2];
+                this.X = new double[NumberEndNode - NumberInitialNode];
+                this.Y = new double[NumberEndNode - NumberInitialNode];
             }
+            for (int i = 0; i < NumberEndNode - NumberInitialNode; i++)
+            {
+                T[i, 0] = X[NumberInitialNode + i];
+                T[i, 1] = Y[NumberInitialNode + i];
+                this.X[i] = X[NumberInitialNode + i];
+                this.Y[i] = Y[NumberInitialNode + i];
+            }
+        }
+        /// <summary>
+        /// Конструктор класса Участок
+        /// </summary>
+        /// <param name="X">Вектор X</param>
+        /// <param name="Y">Вектор Y</param>
+        /// <param name="numberInitialNode">Индекс стартового узла</param>
+        /// <param name="numberEndNode">Индекс конечного узла</param>
+        /// <param name="PreviousSegment">Предыдущий сегмент</param>
+        public Segment(double[] X, double[] Y, int numberInitialNode, int numberEndNode, Segment PreviousSegment = null)
+        {
+            this.NumberInitialNode = numberInitialNode;
+            this.NumberEndNode = numberEndNode;
+            SegmentLength = NumberEndNode - NumberInitialNode;
+
+            this.T = new double[numberEndNode - numberInitialNode, 2];
+            this.X = new double[numberEndNode - numberInitialNode];
+            this.Y = new double[numberEndNode - numberInitialNode];
+
             for (int i = 0; i < numberEndNode - numberInitialNode; i++)
             {
                 T[i, 0] = X[numberInitialNode + i];
@@ -89,17 +121,19 @@ namespace ProjectObjects
         /// <summary>
         /// Обновление матриц X, Y, T
         /// </summary>
+        /// <param name="X">Матрица X</param>
+        /// <param name="Y">Матрица Y</param>
         public void UpdatingMatrices(double[] X, double[] Y)
         {
-            this.T = new double[numberEndNode - numberInitialNode, 2];
-            this.X = new double[numberEndNode - numberInitialNode];
-            this.Y = new double[numberEndNode - numberInitialNode];
-            for (int i = 0; i < numberEndNode - numberInitialNode; i++)
+            this.T = new double[NumberEndNode - NumberInitialNode, 2];
+            this.X = new double[NumberEndNode - NumberInitialNode];
+            this.Y = new double[NumberEndNode - NumberInitialNode];
+            for (int i = 0; i < NumberEndNode - NumberInitialNode; i++)
             {
-                T[i, 0] = X[numberInitialNode + i];
-                T[i, 1] = Y[numberInitialNode + i];
-                this.X[i] = X[numberInitialNode + i];
-                this.Y[i] = Y[numberInitialNode + i];
+                T[i, 0] = X[NumberInitialNode + i];
+                T[i, 1] = Y[NumberInitialNode + i];
+                this.X[i] = X[NumberInitialNode + i];
+                this.Y[i] = Y[NumberInitialNode + i];
             }
         }
         /// <summary>
@@ -129,12 +163,6 @@ namespace ProjectObjects
         /// <summary>
         /// Вычисление практического значения в методе наименьших квадратов
         /// </summary>
-        /// <summary>
-        /// Вычисление коэффициента детерминации
-        /// </summary>
-        /// <param name="Y">Вектор исходных значений</param>
-        /// <param name="YT">Вектор значений, полученных из модели</param>
-        /// <returns></returns>
         public void CalculatingPracticalValue()
         {
             YPractical = new double[X.Length];

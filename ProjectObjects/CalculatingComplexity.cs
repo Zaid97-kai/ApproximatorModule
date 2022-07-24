@@ -4,34 +4,40 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImportExcel
+namespace ProjectObjects
 {
     public class CalculatingComplexity
     {
         /// <summary>
         /// Число сравнений
         /// </summary>
-        public int CountComparisons { get; set; }
+        public static int CountComparisons { get; set; }
         /// <summary>
         /// Количество сложений
         /// </summary>
-        public int CountAdditions { get; set; }
+        public static int CountAdditions { get; set; }
         /// <summary>
         /// Количество вычитаний
         /// </summary>
-        public int CountSubtractions { get; set; }
+        public static int CountSubtractions { get; set; }
         /// <summary>
         /// Количество умножений
         /// </summary>
-        public int CountMultiplications { get; set; }
+        public static int CountMultiplications { get; set; }
         /// <summary>
         /// Количество делений
         /// </summary>
-        public int CountDivisions { get; set; }
+        public static int CountDivisions { get; set; }
         /// <summary>
-        /// Конструктор по умолчанию
+        /// Метод, обнуляющий счетчик операций
         /// </summary>
-        public  CalculatingComplexity()
-        { }
+        public static void NullCalculatingComplexity()
+        {
+            CountComparisons = 0;
+            CountDivisions = 0;
+            CountAdditions = 0;
+            CountMultiplications = 0;
+            CountSubtractions = 0;
+        }
     }
 }

@@ -20,16 +20,32 @@
             <TextBlock Grid.Column="0" FontFamily="Berlin Sans FB" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center">Допустимая точность ε</TextBlock>
             <TextBox Grid.Column="1" x:Name="TbAcceptableAccuracy"></TextBox>
         </Grid>
-        <DataGrid Grid.Row="1" x:Name="LbInputDataSecond" AutoGenerateColumns="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Times New Roman" FontSize="16">
+        <UniformGrid Grid.Row="1" Columns="2">
+        <DataGrid x:Name="LbInputDataSecond" AutoGenerateColumns="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Times New Roman" FontSize="16">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Number Segment" Binding="{Binding Path=Number}"></DataGridTextColumn>
-                <DataGridTextColumn Header="i" Binding="{Binding Path=numberInitialNode}"></DataGridTextColumn>
-                <DataGridTextColumn Header="j" Binding="{Binding Path=numberEndNode}"></DataGridTextColumn>
+                <DataGridTextColumn Header="i" Binding="{Binding Path=NumberInitialNode}"></DataGridTextColumn>
+                <DataGridTextColumn Header="j" Binding="{Binding Path=NumberEndNode}"></DataGridTextColumn>
                 <DataGridTextColumn Header="A" Binding="{Binding Path=A}"></DataGridTextColumn>
                 <DataGridTextColumn Header="B" Binding="{Binding Path=B}"></DataGridTextColumn>
                 <DataGridTextColumn Header="R2" Binding="{Binding Path=Determination}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Grid.Row="2" x:Name="BnOpenExcel" Click="BnOpenExcel_Click">Open</Button>
+            <DataGrid x:Name="DgOutputData" AutoGenerateColumns="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Times New Roman" FontSize="16">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="L" Binding="{Binding Path=SegmentLength}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="min R2" Binding="{Binding Path=WorstCoefficientDetermination}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="ε" Binding="{Binding Path=AcceptableAccuracyValue}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </UniformGrid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" x:Name="BnOpenExcelSecond" Click="BnOpenExcelSecond_Click">Open Second Mode</Button>
+            <Button Grid.Column="0" x:Name="BnOpenExcel" Click="BnOpenExcel_Click">Open First Mode</Button>
+        </Grid>
     </Grid>
 </Window>
