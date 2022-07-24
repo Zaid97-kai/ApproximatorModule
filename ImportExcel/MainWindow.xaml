@@ -33,9 +33,9 @@
         </DataGrid>
             <DataGrid x:Name="DgOutputData" AutoGenerateColumns="False" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontFamily="Times New Roman" FontSize="16">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="L"></DataGridTextColumn>
-                    <DataGridTextColumn Header="min R2"></DataGridTextColumn>
-                    <DataGridTextColumn Header="ε"></DataGridTextColumn>
+                    <DataGridTextColumn Header="L" Binding="{Binding Path=SegmentLength}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="min R2" Binding="{Binding Path=WorstCoefficientDetermination}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="ε" Binding="{Binding Path=AcceptableAccuracyValue}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </UniformGrid>

@@ -9,5 +9,6 @@ namespace ProjectObjects.TemporaryClasses
     public static class SegmentContainer
     {
         public static List<Segment> segments = new List<Segment>();
+        public static List<TemporarySegment> temporarySegments = new List<TemporarySegment>();
     }
 }

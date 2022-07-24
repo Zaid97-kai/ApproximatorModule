@@ -302,6 +302,7 @@ namespace ImportExcel
             }
             while (SegmentContainer.segments.Count == 1);
             LbInputDataSecond.ItemsSource = SegmentContainer.segments;
+            DgOutputData.ItemsSource = SegmentContainer.temporarySegments;
         }
     }
 }

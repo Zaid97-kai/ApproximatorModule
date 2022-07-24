@@ -38,10 +38,16 @@ namespace ProjectObjects.AlgorithmClasses
         public static void Method()
         {
             int CountSegments = 1;
+            Segment PreviousSegment = SegmentContainer.segments[0];
 
             do
             {
                 CountSegments++;
+                
+                if((PreviousSegment.NumberEndNode - PreviousSegment.NumberInitialNode) == (SegmentContainer.segments[0].NumberEndNode / CountSegments))
+                {
+                    continue;
+                }
                 if (SegmentContainer.segments[0].NumberEndNode / CountSegments == 1)
                 {
                     return;
@@ -55,7 +61,14 @@ namespace ProjectObjects.AlgorithmClasses
                     SegmentContainer.segments[SegmentContainer.segments.Count - 1].LeastSquaresMethod();
                     SegmentContainer.segments[SegmentContainer.segments.Count - 1].CalculatingPracticalValue();
                     SegmentContainer.segments[SegmentContainer.segments.Count - 1].Determination = AuxiliaryTools.CalculationDetermination(SegmentContainer.segments[SegmentContainer.segments.Count - 1].Y, SegmentContainer.segments[SegmentContainer.segments.Count - 1].YPractical);
+                    PreviousSegment = SegmentContainer.segments[SegmentContainer.segments.Count - 1];
                 }
+                SegmentContainer.temporarySegments.Add(new TemporarySegment()
+                {
+                    SegmentLength = SegmentContainer.segments[SegmentContainer.segments.Count - 1].NumberEndNode - SegmentContainer.segments[SegmentContainer.segments.Count - 1].NumberInitialNode,
+                    AcceptableAccuracyValue = AuxiliaryTools.AcceptableAccuracyValue,
+                    WorstCoefficientDetermination = SegmentContainer.segments.Min(s => s.Determination)
+                });
             }
             while (!SegmentComparison(SegmentContainer.segments));
         }
